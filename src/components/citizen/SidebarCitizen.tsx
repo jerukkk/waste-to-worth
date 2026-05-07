@@ -10,7 +10,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: PlusSquare, label: "Submit", href: "/submit" },
   { icon: MapPin, label: "Tracking", href: "/history" },
-  { icon: Wallet, label: "Wallet", href: "/rewards" },
+  { icon: Wallet, label: "Rewards", href: "/rewards" },
 ];
 
 export function SidebarCitizen() {

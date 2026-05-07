@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
         totalBoxes,
         capacityPercent: totalBoxes > 0 ? Math.round((usedCount / totalBoxes) * 100) : 0,
         isFull: usedCount >= totalBoxes,
-        availableBoxes: d.boxes.filter((b) => b.isAvailable),
+        availableBoxes: d.boxes.filter((b: { id: string; boxNumber: string; isAvailable: boolean }) => b.isAvailable),
       };
     });
 
