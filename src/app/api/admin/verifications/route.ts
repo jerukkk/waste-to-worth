@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const verified = await prisma.$transaction(async (tx) => {
+    const verified = await prisma.$transaction(async (tx: any) => {
       let totalPoints = 0;
 
       for (const item of submission.submissionItems) {

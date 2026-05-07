@@ -174,6 +174,22 @@ export default function SubmitPage() {
                 >
                   Open Form Details
                 </Link>
+                
+                {/* Temporary Bypass Button */}
+                {dropboxes.length > 0 && (
+                  <Link
+                    href={`/submit/dropbox?dropboxId=${dropboxes[0].id}`}
+                    className="block text-center py-2 mt-2 rounded-xl text-xs font-semibold transition-all duration-200 border"
+                    style={{
+                      borderColor: "#16C47F",
+                      color: "#16C47F",
+                      background: "rgba(22,196,127,0.05)",
+                    }}
+                  >
+                    Simulasikan QR Scan (Bypass)
+                  </Link>
+                )}
+
                 <p
                   className="text-xs text-center mt-3"
                   style={{ color: "#B8DECA" }}
