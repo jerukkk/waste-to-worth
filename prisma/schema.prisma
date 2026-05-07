@@ -158,6 +158,7 @@ enum SubmissionStatus {
   PENDING
   VERIFIED
   REJECTED
+  COMPLETED
 }
 
 model SubmissionItem {
