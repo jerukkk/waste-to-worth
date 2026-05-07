@@ -41,25 +41,51 @@ export async function GET(request: NextRequest) {
       orderBy: { name: "asc" },
     });
 
+    type DropboxWithBoxes = (typeof allDropboxes)[number];
+
     // Filter dropboxes by district scope (match name or address)
-    const scopedDropboxes = allDropboxes.filter((db) => {
+    const scopedDropboxes = allDropboxes.filter((db: DropboxWithBoxes) => {
       const text = normalizeText(`${db.name} ${db.address}`);
       return text.includes(scope);
     });
 
-    const data = scopedDropboxes.map((d) => ({
-      ...d,
-      capacityPercent: Math.round((d.currentBoxCount / d.maxCapacity) * 100),
-      isFull: d.currentBoxCount >= d.maxCapacity,
-      availableBoxes: d.boxes.filter((b) => b.isAvailable),
-    }));
+    const dropboxIds = scopedDropboxes.map((d: DropboxWithBoxes) => d.id);
 
-    // Get OPEN batches for these dropboxes
-    const dropboxIds = scopedDropboxes.map((d) => d.id);
-    const openBatches = await prisma.batch.findMany({
+    // Count boxes actually used in OPEN batches (from dropboxSubmissionDetail)
+    const openSubmissions = await prisma.dropboxSubmissionDetail.findMany({
+      where: {
+        dropbox: { id: { in: dropboxIds } },
+        submission: { status: "PENDING", batch: { status: "OPEN" } },
+      },
+      select: { dropboxId: true, boxId: true },
+    });
+
+    // Group used box IDs per dropbox
+    const usedBoxesByDropbox: Record<string, Set<string>> = {};
+    for (const sub of openSubmissions) {
+      if (!usedBoxesByDropbox[sub.dropboxId]) {
+        usedBoxesByDropbox[sub.dropboxId] = new Set();
+      }
+      usedBoxesByDropbox[sub.dropboxId].add(sub.boxId);
+    }
+
+    const data = scopedDropboxes.map((d: DropboxWithBoxes) => {
+      const usedCount = usedBoxesByDropbox[d.id]?.size || 0;
+      const totalBoxes = d.boxes.length;
+      return {
+        ...d,
+        usedBoxes: usedCount,
+        totalBoxes,
+        capacityPercent: totalBoxes > 0 ? Math.round((usedCount / totalBoxes) * 100) : 0,
+        isFull: usedCount >= totalBoxes,
+        availableBoxes: d.boxes.filter((b) => b.isAvailable),
+      };
+    });
+
+    // Get ALL batches for these dropboxes (so frontend can check for COMPLETED)
+    const allBatches = await prisma.batch.findMany({
       where: {
         type: "DROPBOX",
-        status: "OPEN",
         dropboxId: { in: dropboxIds },
       },
       include: {
@@ -74,7 +100,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ data, batches: openBatches, scope });
+    return NextResponse.json({ data, batches: allBatches, scope });
   } catch (error) {
     console.error("Admin dropboxes error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

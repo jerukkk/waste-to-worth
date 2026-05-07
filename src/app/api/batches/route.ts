@@ -61,11 +61,51 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { batchId, action, verificationData } = body;
+    const { batchId, dropboxId, action, verificationData } = body;
 
-    if (!batchId || !action) {
+    if (!action) {
       return NextResponse.json(
-        { error: "batchId and action are required" },
+        { error: "action is required" },
+        { status: 400 }
+      );
+    }
+
+    // Handle "open" action separately (creates new batch, no batchId needed)
+    if (action === "open") {
+      if (!dropboxId) {
+        return NextResponse.json({ error: "dropboxId is required for open action" }, { status: 400 });
+      }
+
+      // Check no active batch exists
+      const activeBatch = await prisma.batch.findFirst({
+        where: {
+          dropboxId,
+          type: "DROPBOX",
+          status: { in: ["OPEN", "VERIFYING"] },
+        },
+      });
+
+      if (activeBatch) {
+        return NextResponse.json(
+          { error: "Dropbox masih memiliki batch aktif. Selesaikan dulu sebelum buka batch baru." },
+          { status: 400 }
+        );
+      }
+
+      const newBatch = await prisma.batch.create({
+        data: {
+          type: "DROPBOX",
+          dropboxId,
+          status: "OPEN",
+        },
+      });
+
+      return NextResponse.json({ data: newBatch }, { status: 201 });
+    }
+
+    if (!batchId) {
+      return NextResponse.json(
+        { error: "batchId is required" },
         { status: 400 }
       );
     }

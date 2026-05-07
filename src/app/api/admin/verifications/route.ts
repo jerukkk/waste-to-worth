@@ -279,6 +279,23 @@ export async function POST(request: NextRequest) {
       return { ...updatedSubmission, totalPoints };
     });
 
+    // Auto-complete batch if all submissions are verified/rejected
+    if (submission.batchId) {
+      const remainingPending = await prisma.submission.count({
+        where: {
+          batchId: submission.batchId,
+          status: "PENDING",
+        },
+      });
+
+      if (remainingPending === 0) {
+        await prisma.batch.update({
+          where: { id: submission.batchId },
+          data: { status: "COMPLETED" },
+        });
+      }
+    }
+
     return NextResponse.json({
       message: "Submission verified",
       data: verified,
