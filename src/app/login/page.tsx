@@ -8,6 +8,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"CITIZEN" | "ADMIN">("CITIZEN");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role }),
       });
 
       const data = await res.json();
@@ -43,25 +44,191 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full p-8 bg-white rounded-lg shadow">
-        <h1 className="text-2xl font-bold text-center mb-6">Login — Waste to Worth</h1>
-        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ background: "#F8FAF9" }}
+    >
+      <div
+        className="max-w-md w-full p-8 rounded-2xl"
+        style={{
+          background: "#fff",
+          border: "1px solid #E5EDE9",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+        }}
+      >
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <h1
+            className="text-2xl font-bold"
+            style={{
+              color: "#1A2E27",
+              fontFamily: "'Space Grotesk',sans-serif",
+            }}
+          >
+            Waste <span style={{ color: "#16C47F" }}>to</span> Worth
+          </h1>
+          <p className="text-sm mt-1" style={{ color: "#8BAF9E" }}>
+            Sign in to your account
+          </p>
+        </div>
+
+        {error && (
+          <div
+            className="text-sm mb-4 p-3 rounded-xl text-center"
+            style={{
+              background: "rgba(231,76,60,0.08)",
+              color: "#E74C3C",
+              border: "1px solid rgba(231,76,60,0.15)",
+            }}
+          >
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Role selector */}
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full border rounded px-3 py-2" />
+            <label
+              className="block text-xs font-semibold mb-1.5"
+              style={{ color: "#5A8A78" }}
+            >
+              Login as
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setRole("CITIZEN")}
+                className="py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
+                style={{
+                  background:
+                    role === "CITIZEN"
+                      ? "rgba(22,196,127,0.10)"
+                      : "#F8FAF9",
+                  color: role === "CITIZEN" ? "#16C47F" : "#8BAF9E",
+                  border:
+                    role === "CITIZEN"
+                      ? "1.5px solid #16C47F"
+                      : "1.5px solid #E5EDE9",
+                }}
+              >
+                🏠 Citizen
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("ADMIN")}
+                className="py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
+                style={{
+                  background:
+                    role === "ADMIN"
+                      ? "rgba(52,152,219,0.10)"
+                      : "#F8FAF9",
+                  color: role === "ADMIN" ? "#3498DB" : "#8BAF9E",
+                  border:
+                    role === "ADMIN"
+                      ? "1.5px solid #3498DB"
+                      : "1.5px solid #E5EDE9",
+                }}
+              >
+                🛡️ Admin
+              </button>
+            </div>
           </div>
+
+          {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full border rounded px-3 py-2" />
+            <label
+              className="block text-xs font-semibold mb-1.5"
+              style={{ color: "#5A8A78" }}
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+              className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200"
+              style={{
+                border: "1.5px solid #E5EDE9",
+                color: "#1A2E27",
+                background: "#F8FAF9",
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#16C47F";
+                e.currentTarget.style.background = "#fff";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "#E5EDE9";
+                e.currentTarget.style.background = "#F8FAF9";
+              }}
+            />
           </div>
-          <button type="submit" disabled={loading} className="w-full bg-emerald-600 text-white py-2 rounded hover:bg-emerald-700 disabled:opacity-50">
-            {loading ? "Logging in..." : "Login"}
+
+          {/* Password */}
+          <div>
+            <label
+              className="block text-xs font-semibold mb-1.5"
+              style={{ color: "#5A8A78" }}
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+              className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200"
+              style={{
+                border: "1.5px solid #E5EDE9",
+                color: "#1A2E27",
+                background: "#F8FAF9",
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#16C47F";
+                e.currentTarget.style.background = "#fff";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "#E5EDE9";
+                e.currentTarget.style.background = "#F8FAF9";
+              }}
+            />
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
+            style={{
+              background: "linear-gradient(135deg, #16C47F, #0EA572)",
+              color: "#fff",
+              boxShadow: "0 4px 12px rgba(22,196,127,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              if (!loading)
+                e.currentTarget.style.boxShadow =
+                  "0 6px 20px rgba(22,196,127,0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow =
+                "0 4px 12px rgba(22,196,127,0.3)";
+            }}
+          >
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-        <p className="text-center text-sm mt-4">
-          Don&apos;t have an account? <Link href="/register" className="text-emerald-600 hover:underline">Register</Link>
+
+        <p className="text-center text-xs mt-5" style={{ color: "#8BAF9E" }}>
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="font-semibold"
+            style={{ color: "#16C47F" }}
+          >
+            Register
+          </Link>
         </p>
       </div>
     </div>

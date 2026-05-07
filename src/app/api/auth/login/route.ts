@@ -1,7 +1,8 @@
 /**
  * POST /api/auth/login
  *
- * Authenticates a user with email and password.
+ * Authenticates a user with email, password, and role.
+ * Verifies that the selected role matches the user's role in the database.
  * Returns user data and sets JWT token in httpOnly cookie.
  */
 
@@ -12,7 +13,7 @@ import { comparePassword, signToken } from "@/lib/auth";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, role } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -37,6 +38,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
+      );
+    }
+
+    // Verify that the selected role matches the user's actual role
+    if (role && role !== user.role) {
+      return NextResponse.json(
+        {
+          error:
+            role === "ADMIN"
+              ? "This account does not have admin access"
+              : "This account is registered as an admin",
+        },
+        { status: 403 }
       );
     }
 

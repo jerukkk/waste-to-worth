@@ -88,6 +88,7 @@ async function main() {
   // ─── Point Rules ──────────────────────────────────────────────
   const pointRules = [
     { itemType: "smartphone", pointsPerKg: 100 },
+    { itemType: "charger", pointsPerKg: 70 },
     { itemType: "laptop", pointsPerKg: 150 },
     { itemType: "kabel", pointsPerKg: 50 },
   ];
