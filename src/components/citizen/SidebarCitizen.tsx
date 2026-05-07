@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  LayoutDashboard, PlusSquare, MapPin, Wallet, Settings, HelpCircle, LogOut, Cpu, User,
+  LayoutDashboard, PlusSquare, MapPin, Wallet, Settings, HelpCircle, User,
 } from "lucide-react";
 
 const navItems = [

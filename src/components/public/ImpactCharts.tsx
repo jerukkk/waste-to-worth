@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -35,7 +33,7 @@ const growthData = [
   { week: "W4 Mar", kg: 1050 },
 ];
 
-const CustomTooltipGrowth = ({ active, payload, label }: any) => {
+const CustomTooltipGrowth = ({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#0F2A24] border border-[#16C47F]/40 rounded-xl p-3 shadow-xl">
@@ -96,7 +94,7 @@ const districtData = [
   { district: "Ujung Pandang", kg: 1120, fill: "#085A3E" },
 ];
 
-const CustomTooltipDistrict = ({ active, payload }: any) => {
+const CustomTooltipDistrict = ({ active, payload }: { active?: boolean; payload?: { value: number; payload: { district: string } }[] }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#0F2A24] border border-[#16C47F]/40 rounded-xl p-3 shadow-xl">
@@ -145,7 +143,7 @@ const categoryData = [
   { name: "Lainnya",     value: 810,  color: "#085A3E" },
 ];
 
-const renderCustomLabel = ({ cx, cy, midAngle, outerRadius, percent }: any) => {
+const renderCustomLabel = ({ cx, cy, midAngle, outerRadius, percent }: { cx: number; cy: number; midAngle: number; outerRadius: number; percent: number }) => {
   const RADIAN = Math.PI / 180;
   const radius = outerRadius + 24;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
