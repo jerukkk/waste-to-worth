@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CircleCheckBig, Leaf, MapPinned } from "lucide-react";
+import { CircleCheckBig, Leaf, MapPinned, PlusCircle, AlertTriangle } from "lucide-react";
 
 interface SubmissionResult {
   id: string;
@@ -14,9 +14,11 @@ interface SubmissionResult {
 
 interface SubmissionCompletedProps {
   submission: SubmissionResult;
+  onSubmitAnother?: () => void;
+  canSubmitAnother?: boolean;
 }
 
-export function SubmissionCompleted({ submission }: SubmissionCompletedProps) {
+export function SubmissionCompleted({ submission, onSubmitAnother, canSubmitAnother = true }: SubmissionCompletedProps) {
   const totalItemCount = submission.items.reduce((sum, item) => sum + item.quantity, 0);
   const estimatedRecoveredKg = Number((totalItemCount * 0.45).toFixed(1));
   const estimatedCo2OffsetKg = Number((estimatedRecoveredKg * 3).toFixed(1));
@@ -95,8 +97,55 @@ export function SubmissionCompleted({ submission }: SubmissionCompletedProps) {
           </div>
         </div>
 
+        {/* Submit Another Item */}
+        {onSubmitAnother && canSubmitAnother && (
+          <button
+            onClick={onSubmitAnother}
+            className="w-full flex items-center justify-center gap-2 rounded-full py-3 font-semibold text-white transition-all duration-200"
+            style={{
+              background: "linear-gradient(135deg, #16C47F, #0EA572)",
+              boxShadow: "0 4px 12px rgba(22,196,127,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = "0 6px 20px rgba(22,196,127,0.4)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = "0 4px 12px rgba(22,196,127,0.3)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            <PlusCircle className="h-4 w-4" />
+            Submit Another Item
+          </button>
+        )}
+
+        {/* Dropbox full warning */}
+        {onSubmitAnother && !canSubmitAnother && (
+          <div
+            className="rounded-2xl px-4 py-3 text-sm"
+            style={{
+              background: "rgba(243,156,18,0.08)",
+              border: "1px solid rgba(243,156,18,0.2)",
+              color: "#8B6914",
+            }}
+          >
+            <p className="flex items-center gap-2 font-semibold mb-1">
+              <AlertTriangle className="h-4 w-4" style={{ color: "#F39C12" }} />
+              All dropbox slots are full
+            </p>
+            <p className="text-xs" style={{ color: "#8BAF9E" }}>
+              Try another dropbox location or use{" "}
+              <Link href="/submit/pickup" className="underline" style={{ color: "#16C47F" }}>
+                On-Demand Pickup
+              </Link>{" "}
+              instead.
+            </p>
+          </div>
+        )}
+
         <Link
-          href="/tracking"
+          href="/history"
           className="block text-center rounded-full bg-w2w-accent py-3 font-semibold text-white"
         >
           Track Submission

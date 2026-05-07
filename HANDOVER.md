@@ -37,6 +37,7 @@ This document serves as a technical handover for the **Waste to Worth** projectâ
     *   **Stage 1 (Form)**: Selection of box and item declaration.
     *   **Stage 2 (Verifying)**: Simulated/Real verification state (orchestrator in `dropbox/page.tsx`).
     *   **Stage 3 (Completed)**: Final confirmation and points award visualization.
+    *   **Submit Again**: Setelah verifikasi selesai (Stage 3), tampilkan tombol "Submit Another Item" yang memungkinkan pengguna kembali ke Stage 1 untuk submit barang lagi. Tombol ini **hanya aktif jika masih ada slot Box yang tersedia** di dropbox yang dipilih. Cek ketersediaan via `Box.isAvailable` dan `DropboxLocation.currentBoxCount < maxCapacity`. Jika dropbox sudah penuh, tampilkan pesan bahwa dropbox sudah penuh dan arahkan ke pemilihan dropbox lain atau metode Pickup.
 
 ---
 

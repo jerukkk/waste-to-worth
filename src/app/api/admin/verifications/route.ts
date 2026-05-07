@@ -44,7 +44,10 @@ export async function GET(request: NextRequest) {
     }
 
     const pendingSubmissions = await prisma.submission.findMany({
-      where: { status: "PENDING" },
+      where: {
+        status: "PENDING",
+        batch: { status: "VERIFYING" },
+      },
       include: {
         user: { select: { id: true, name: true, email: true } },
         submissionItems: true,

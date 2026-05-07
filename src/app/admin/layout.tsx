@@ -8,7 +8,6 @@ const sidebarItems = [
   { href: "/admin/verifications", label: "Verifications" },
   { href: "/admin/batches", label: "Batches" },
   { href: "/admin/dropboxes", label: "Dropboxes" },
-  { href: "/admin/schedules", label: "Schedules" },
   { href: "/admin/rewards", label: "Rewards" },
 ];
 

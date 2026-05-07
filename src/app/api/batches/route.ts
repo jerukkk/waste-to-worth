@@ -100,10 +100,10 @@ export async function POST(request: NextRequest) {
       }
 
       case "verify": {
-        // COLLECTING → VERIFYING
-        if (batch.status !== "COLLECTING") {
+        // OPEN → VERIFYING (skip COLLECTING) or COLLECTING → VERIFYING
+        if (batch.status !== "OPEN" && batch.status !== "COLLECTING") {
           return NextResponse.json(
-            { error: "Batch must be COLLECTING to start verification" },
+            { error: "Batch must be OPEN or COLLECTING to start verification" },
             { status: 400 }
           );
         }

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SidebarCitizen } from "@/components/citizen/SidebarCitizen";
 import { DropboxForm } from "@/components/citizen/submit/DropboxForm";
 import { DropboxReview } from "@/components/citizen/submit/DropboxReview";
@@ -26,6 +27,9 @@ interface SubmissionResult {
 }
 
 export default function DropboxSubmitPage() {
+  const searchParams = useSearchParams();
+  const qrDropboxId = searchParams.get("dropboxId") || "";
+
   const [state, setState] = useState<FlowState>("form");
   const [draft, setDraft] = useState<DraftSubmission | null>(null);
   const [submission, setSubmission] = useState<SubmissionResult | null>(null);
@@ -74,6 +78,13 @@ export default function DropboxSubmitPage() {
     }, 8000);
     return () => clearInterval(interval);
   }, [submission, state]);
+
+  // Refresh availability once more when entering completed state
+  useEffect(() => {
+    if (state === "completed") {
+      refreshDropboxAvailability().catch(() => null);
+    }
+  }, [state]);
 
   useEffect(() => {
     const bootstrapLatestSubmission = async () => {
@@ -167,7 +178,7 @@ export default function DropboxSubmitPage() {
       <main className="flex-1 ml-64 min-h-screen">
         <div className="max-w-[1100px] mx-auto px-8 py-10">
           {state === "form" && (
-            <DropboxForm onContinue={handleDraftReady} />
+            <DropboxForm onContinue={handleDraftReady} lockedDropboxId={qrDropboxId} />
           )}
           {state === "review" && draft && (
             <DropboxReview
@@ -187,7 +198,11 @@ export default function DropboxSubmitPage() {
             />
           )}
           {state === "completed" && submission && (
-            <SubmissionCompleted submission={submission} />
+            <SubmissionCompleted
+              submission={submission}
+              onSubmitAnother={handleStartNewSubmission}
+              canSubmitAnother={canSubmitAnother}
+            />
           )}
         </div>
       </main>

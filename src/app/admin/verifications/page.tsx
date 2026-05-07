@@ -177,7 +177,8 @@ export default function AdminVerificationsPage() {
         <div>
           <h1 className="text-2xl font-bold">Submission Verifications</h1>
           <p className="text-gray-600">
-            Verifikasi submission citizen dan sinkronkan poin ke dashboard user.
+            Verifikasi submission dari batch yang sudah dikumpulkan. Kumpulkan batch terlebih dahulu di halaman{" "}
+            <a href="/admin/dropboxes" className="text-emerald-600 underline font-medium">Dropboxes</a>.
           </p>
         </div>
         <button
@@ -204,26 +205,27 @@ export default function AdminVerificationsPage() {
             {submissions.length === 0 && !loading ? (
               <p className="p-4 text-sm text-gray-500">Tidak ada submission pending.</p>
             ) : (
-              submissions.map((submission) => (
-                <button
-                  key={submission.id}
-                  onClick={() => setSelectedId(submission.id)}
-                  className={`w-full text-left p-4 border-b hover:bg-gray-50 ${
-                    selectedId === submission.id ? "bg-emerald-50" : "bg-white"
-                  }`}
-                >
-                  <p className="font-medium text-sm">{submission.user.name}</p>
-                  <p className="text-xs text-gray-500">{submission.user.email}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(submission.submittedAt).toLocaleString()}
-                  </p>
-                  <p className="text-xs mt-1">
-                    {submission.method === "DROPBOX"
-                      ? submission.dropboxSubmissionDetail?.dropbox.name || "Dropbox"
-                      : submission.pickupSubmissionDetail?.district.name || "Pickup"}
-                  </p>
-                </button>
-              ))
+              submissions.map((submission) => {
+                const boxNum = submission.dropboxSubmissionDetail?.box?.boxNumber;
+                return (
+                  <button
+                    key={submission.id}
+                    onClick={() => setSelectedId(submission.id)}
+                    className={`w-full text-left p-4 border-b hover:bg-gray-50 ${
+                      selectedId === submission.id ? "bg-emerald-50" : "bg-white"
+                    }`}
+                  >
+                    <p className="font-bold text-base">
+                      {boxNum || (submission.method === "PICKUP" ? "Pickup" : "—")}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-0.5">{submission.user.name}</p>
+                    <p className="text-xs text-gray-400">{submission.user.email}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {new Date(submission.submittedAt).toLocaleString()}
+                    </p>
+                  </button>
+                );
+              })
             )}
           </div>
         </div>
@@ -296,12 +298,12 @@ export default function AdminVerificationsPage() {
                           />
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500">Rule</p>
-                          <p className="text-sm font-medium">{pointsPerKg} pts/kg</p>
+                          <p className="text-xs text-gray-500">pts/kg</p>
+                          <p className="text-sm font-medium">{pointsPerKg}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-500">Est. points</p>
-                          <p className="text-sm font-semibold">{estimatedPoints}</p>
+                          <p className="text-sm font-semibold text-emerald-600">{estimatedPoints}</p>
                         </div>
                       </div>
                     );
