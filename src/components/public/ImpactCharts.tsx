@@ -143,7 +143,7 @@ const categoryData = [
   { name: "Lainnya",     value: 810,  color: "#085A3E" },
 ];
 
-const renderCustomLabel = ({ cx, cy, midAngle, outerRadius, percent }: { cx: number; cy: number; midAngle: number; outerRadius: number; percent: number }) => {
+const renderCustomLabel = ({ cx = 0, cy = 0, midAngle = 0, outerRadius = 0, percent = 0 }: { cx?: number; cy?: number; midAngle?: number; outerRadius?: number; percent?: number }) => {
   const RADIAN = Math.PI / 180;
   const radius = outerRadius + 24;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);

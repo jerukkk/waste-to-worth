@@ -56,11 +56,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, address, lat, lng, qrCode, boxCount } = body;
+    const { name, address, lat, lng, qrCode, boxCount, districtId } = body;
 
-    if (!name || !address || !lat || !lng || !qrCode) {
+    if (!name || !address || !lat || !lng || !qrCode || !districtId) {
       return NextResponse.json(
-        { error: "name, address, lat, lng, and qrCode are required" },
+        { error: "name, address, lat, lng, qrCode, and districtId are required" },
         { status: 400 }
       );
     }
@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
         lat: parseFloat(lat),
         lng: parseFloat(lng),
         qrCode,
+        districtId,
         boxes: {
           create: Array.from({ length: boxCount || 10 }, (_, i) => ({
             boxNumber: `${qrCode}-${String(i + 1).padStart(3, "0")}`,

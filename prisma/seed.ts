@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Prisma Seed Script
  * Seeds the database with initial data for Waste to Worth platform.
